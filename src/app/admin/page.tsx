@@ -129,7 +129,7 @@ export default function AdminDashboard() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Tableau de Bord</h1>
         <p className="text-gray-500 mt-1">
-          Bienvenue sur votre espace d&apos;administration DKA-Consulting
+          Bienvenue sur votre espace d&apos;administration DKA-Consulting SARL
         </p>
       </div>
 

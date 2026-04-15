@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { usePageContent } from "@/lib/supabase/content";
 
 const steps = [
   {
@@ -66,6 +67,23 @@ const reasons = [
 ];
 
 export default function MorcellementPage() {
+  const { get } = usePageContent("service-morcellement");
+
+  const dynReasons = get<Array<{title: string; description: string}>>("reasons", []);
+  const displayReasons = reasons.map((r, i) => ({
+    ...r,
+    title: dynReasons[i]?.title ?? r.title,
+    description: dynReasons[i]?.description ?? r.description,
+  }));
+
+  const displaySteps = get<typeof steps>("steps", steps);
+  const displayAdvantages = get<string[]>("advantages", [
+    "Flexibilité dans la gestion du patrimoine",
+    "Possibilité de vendre partiellement",
+    "Facilitation des successions",
+    "Création de valeur ajoutée",
+  ]);
+
   return (
     <>
       {/* Hero Section */}
@@ -87,7 +105,7 @@ export default function MorcellementPage() {
               <span>/</span>
               <span>Services</span>
               <span>/</span>
-              <span className="text-white">Morcellement</span>
+              <span className="text-white">{get("breadcrumb", "Morcellement")}</span>
             </div>
 
             <div className="flex items-center gap-4 mb-6">
@@ -95,14 +113,12 @@ export default function MorcellementPage() {
                 <Grid3X3 className="h-8 w-8 text-gray-900" />
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-white">
-                Morcellement de Terrain
+                {get("hero_title", "Morcellement de Terrain")}
               </h1>
             </div>
 
             <p className="text-xl text-green-100 leading-relaxed">
-              Le morcellement est une opération juridique et technique consistant à diviser 
-              un terrain déjà immatriculé en plusieurs parcelles distinctes, créant ainsi 
-              de nouveaux titres fonciers individuels.
+              {get("hero_description", "Le morcellement est une opération juridique et technique consistant à diviser un terrain déjà immatriculé en plusieurs parcelles distinctes, créant ainsi de nouveaux titres fonciers individuels.")}
             </p>
           </motion.div>
         </div>
@@ -121,28 +137,19 @@ export default function MorcellementPage() {
                 Comprendre
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Qu&apos;est-ce que le Morcellement ?
+                {get("what_title", "Qu'est-ce que le Morcellement ?")}
               </h2>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Le titre foncier peut subir un <strong>morcellement</strong>, qui est une 
-                opération juridique et technique consistant à <strong>diviser un terrain 
-                déjà immatriculé</strong> en plusieurs parcelles distinctes.
+                {get("what_text", "Le titre foncier peut subir un morcellement, qui est une opération juridique et technique consistant à diviser un terrain déjà immatriculé en plusieurs parcelles distinctes.")}
               </p>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                C&apos;est une opération qui permet de créer de <strong>nouveaux titres fonciers 
-                individuels</strong> pour chaque portion détachée, généralement dans le cadre 
-                de vente, de don, de partage ou de lotissement.
+                {get("what_text2", "C'est une opération qui permet de créer de nouveaux titres fonciers individuels pour chaque portion détachée, généralement dans le cadre de vente, de don, de partage ou de lotissement.")}
               </p>
 
               <div className="bg-green-50 rounded-2xl p-6">
-                <h4 className="font-semibold text-gray-900 mb-4">Avantages du Morcellement</h4>
+                <h4 className="font-semibold text-gray-900 mb-4">{get("advantages_title", "Avantages du Morcellement")}</h4>
                 <ul className="space-y-3">
-                  {[
-                    "Flexibilité dans la gestion du patrimoine",
-                    "Possibilité de vendre partiellement",
-                    "Facilitation des successions",
-                    "Création de valeur ajoutée",
-                  ].map((item) => (
+                  {displayAdvantages.map((item) => (
                     <li key={item} className="flex items-center gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
                       <span className="text-gray-600">{item}</span>
@@ -158,7 +165,7 @@ export default function MorcellementPage() {
               viewport={{ once: true }}
               className="grid grid-cols-2 gap-4"
             >
-              {reasons.map((reason) => (
+              {displayReasons.map((reason) => (
                 <Card key={reason.title} className="text-center">
                   <CardContent className="p-6">
                     <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -187,18 +194,17 @@ export default function MorcellementPage() {
               Processus
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Les Étapes du Morcellement
+              {get("process_title", "Les Étapes du Morcellement")}
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Une procédure technique et administrative rigoureuse pour garantir la validité 
-              des nouveaux titres.
+              {get("process_subtitle", "Une procédure technique et administrative rigoureuse pour garantir la validité des nouveaux titres.")}
             </p>
           </motion.div>
 
           <div className="relative max-w-4xl mx-auto">
             <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-green-200 -translate-x-1/2 hidden md:block" />
 
-            {steps.map((step, index) => (
+            {displaySteps.map((step, index) => (
               <motion.div
                 key={step.number}
                 initial={{ opacity: 0, y: 20 }}
@@ -238,10 +244,10 @@ export default function MorcellementPage() {
           >
             <div className="text-center mb-12">
               <span className="inline-block px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium mb-4">
-                Aspects Techniques
+                {get("technical_subtitle", "Aspects Techniques")}
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Notre Expertise Technique
+                {get("technical_title", "Notre Expertise Technique")}
               </h2>
             </div>
 
@@ -252,10 +258,10 @@ export default function MorcellementPage() {
                     <Ruler className="h-8 w-8 text-yellow-600" />
                   </div>
                   <h3 className="font-semibold text-gray-900 text-lg mb-2">
-                    Levé Topographique
+                    {get("tech_1_title", "Levé Topographique")}
                   </h3>
                   <p className="text-gray-600">
-                    Mesures précises par nos géomètres-topographes qualifiés.
+                    {get("tech_1_desc", "Mesures précises par nos géomètres-topographes qualifiés.")}
                   </p>
                 </CardContent>
               </Card>
@@ -266,10 +272,10 @@ export default function MorcellementPage() {
                     <MapPin className="h-8 w-8 text-green-600" />
                   </div>
                   <h3 className="font-semibold text-gray-900 text-lg mb-2">
-                    Bornage Officiel
+                    {get("tech_2_title", "Bornage Officiel")}
                   </h3>
                   <p className="text-gray-600">
-                    Implantation des bornes conformes aux normes en vigueur.
+                    {get("tech_2_desc", "Implantation des bornes conformes aux normes en vigueur.")}
                   </p>
                 </CardContent>
               </Card>
@@ -280,10 +286,10 @@ export default function MorcellementPage() {
                     <FileText className="h-8 w-8 text-blue-600" />
                   </div>
                   <h3 className="font-semibold text-gray-900 text-lg mb-2">
-                    Plans Cadastraux
+                    {get("tech_3_title", "Plans Cadastraux")}
                   </h3>
                   <p className="text-gray-600">
-                    Établissement des plans conformes pour chaque parcelle.
+                    {get("tech_3_desc", "Établissement des plans conformes pour chaque parcelle.")}
                   </p>
                 </CardContent>
               </Card>
@@ -303,15 +309,14 @@ export default function MorcellementPage() {
           >
             <Grid3X3 className="h-16 w-16 mx-auto mb-6 text-yellow-400" />
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Projet de Morcellement ?
+              {get("cta_title", "Projet de Morcellement ?")}
             </h2>
             <p className="text-green-100 max-w-2xl mx-auto mb-8">
-              Que ce soit pour une vente partielle, un partage familial ou un lotissement, 
-              notre équipe de géomètres-topographes vous accompagne de A à Z.
+              {get("cta_text", "Que ce soit pour une vente partielle, un partage familial ou un lotissement, notre équipe de géomètres-topographes vous accompagne de A à Z.")}
             </p>
             <Link href="/contact">
               <Button size="xl" className="bg-yellow-500 hover:bg-yellow-400 text-gray-900">
-                Demander un Devis Gratuit
+                {get("cta_button", "Demander un Devis Gratuit")}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>

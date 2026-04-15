@@ -34,7 +34,7 @@ export default function ParametresPage() {
   });
 
   const [companyData, setCompanyData] = useState({
-    nom: "DKA-Consulting Sarl",
+    nom: "DKA-Consulting SARL",
     rccm: "TG-LFW-01-2023-B 12-01723",
     nif: "1001889673",
     cnss: "180768",

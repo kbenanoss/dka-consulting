@@ -89,6 +89,30 @@ export interface Database {
         };
         Relationships: [];
       };
+      page_content: {
+        Row: {
+          id: string;
+          page_slug: string;
+          title: string;
+          content: Record<string, unknown>;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          page_slug: string;
+          title: string;
+          content: Record<string, unknown>;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          page_slug?: string;
+          title?: string;
+          content?: Record<string, unknown>;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -106,3 +130,5 @@ export type AppUserInsert = Database["public"]["Tables"]["users"]["Insert"];
 export type AppUserUpdate = Database["public"]["Tables"]["users"]["Update"];
 
 export type Activity = Database["public"]["Tables"]["activities"]["Row"];
+
+export type PageContent = Database["public"]["Tables"]["page_content"]["Row"];

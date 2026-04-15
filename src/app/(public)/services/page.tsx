@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { usePageContent } from "@/lib/supabase/content";
 
 const services = [
   {
@@ -98,6 +99,23 @@ const colorConfig = {
 };
 
 export default function ServicesPage() {
+  const { get } = usePageContent("services");
+
+  const displayServices = services.map((svc) => {
+    const keyMap: Record<string, string> = {
+      "/services/titre-foncier": "titre_foncier",
+      "/services/mutation": "mutation",
+      "/services/morcellement": "morcellement",
+      "/services/conseil-juridique": "conseil",
+    };
+    const key = keyMap[svc.href];
+    return {
+      ...svc,
+      title: key ? get(`${key}_title`, svc.title) : svc.title,
+      description: key ? get(`${key}_description`, svc.description) : svc.description,
+    };
+  });
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -113,11 +131,10 @@ export default function ServicesPage() {
               Nos Services
             </span>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Solutions Complètes en Matière Foncière
+              {get("hero_title", "Solutions Complètes en Matière Foncière")}
             </h1>
             <p className="text-xl text-green-100">
-              DKA-Consulting vous accompagne dans toutes vos démarches foncières
-              et immobilières avec professionnalisme et expertise.
+              {get("hero_subtitle", "DKA-Consulting SARL vous accompagne dans toutes vos démarches foncières et immobilières avec professionnalisme et expertise.")}
             </p>
           </motion.div>
         </div>
@@ -127,11 +144,11 @@ export default function ServicesPage() {
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8">
-            {services.map((service, index) => {
+            {displayServices.map((service, index) => {
               const colors = colorConfig[service.color as keyof typeof colorConfig];
               return (
                 <motion.div
-                  key={service.title}
+                  key={service.href}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -185,11 +202,10 @@ export default function ServicesPage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Services Complémentaires
+              {get("additional_title", "Services Complémentaires")}
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              En plus de nos services principaux, nous offrons un accompagnement
-              complet pour tous vos projets immobiliers.
+              {get("additional_subtitle", "En plus de nos services principaux, nous offrons un accompagnement complet pour tous vos projets immobiliers.")}
             </p>
           </motion.div>
 
@@ -243,11 +259,10 @@ export default function ServicesPage() {
             className="max-w-3xl mx-auto text-center text-white"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Besoin d&apos;un Service Personnalisé ?
+              {get("cta_title", "Besoin d'un Service Personnalisé ?")}
             </h2>
             <p className="text-xl text-green-100 mb-8">
-              Notre équipe est à votre disposition pour étudier votre projet
-              et vous proposer une solution adaptée à vos besoins.
+              {get("cta_text", "Notre équipe est à votre disposition pour étudier votre projet et vous proposer une solution adaptée à vos besoins.")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/contact">

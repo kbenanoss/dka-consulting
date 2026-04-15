@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
+import { usePageContent } from "@/lib/supabase/content";
 
 const contactInfo = [
   {
@@ -61,6 +62,14 @@ export default function ContactPage() {
     message: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { get } = usePageContent("contact");
+
+  const displayContactInfo = [
+    { ...contactInfo[0], content: get("address", contactInfo[0].content) },
+    { ...contactInfo[1], content: get("phone", contactInfo[1].content) },
+    { ...contactInfo[2], content: get("email", contactInfo[2].content) },
+    { ...contactInfo[3], content: get("hours", contactInfo[3].content) },
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,11 +99,10 @@ export default function ContactPage() {
               Contact
             </span>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Contactez-Nous
+              {get("hero_title", "Contactez-Nous")}
             </h1>
             <p className="text-xl text-green-100 leading-relaxed">
-              Une question sur nos services ? Un projet foncier à discuter ? 
-              Notre équipe est à votre disposition pour vous accompagner.
+              {get("hero_subtitle", "Notre équipe est à votre disposition pour répondre à toutes vos questions et vous accompagner dans vos projets fonciers.")}
             </p>
           </motion.div>
         </div>
@@ -104,7 +112,7 @@ export default function ContactPage() {
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 -mt-20 relative z-20">
-            {contactInfo.map((info, index) => (
+            {displayContactInfo.map((info, index) => (
               <motion.div
                 key={info.title}
                 initial={{ opacity: 0, y: 20 }}

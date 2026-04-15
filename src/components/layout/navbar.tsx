@@ -67,7 +67,7 @@ export function Navbar() {
                 <span className="text-white font-bold text-xl">DK</span>
               </motion.div>
               <div className="hidden sm:block">
-                <h1 className="font-bold text-xl text-gray-900">DKA-Consulting</h1>
+                <h1 className="font-bold text-xl text-gray-900">DKA-Consulting SARL</h1>
                 <p className="text-xs text-gray-500">Foncier & Immobilier</p>
               </div>
             </Link>

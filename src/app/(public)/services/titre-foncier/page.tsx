@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { usePageContent } from "@/lib/supabase/content";
 
 const steps = [
   {
@@ -72,6 +73,18 @@ const benefits = [
 ];
 
 export default function TitreFoncierPage() {
+  const { get } = usePageContent("service-titre-foncier");
+
+  const dynBenefits = get<Array<{title: string; description: string}>>("benefits", []);
+  const displayBenefits = benefits.map((b, i) => ({
+    ...b,
+    title: dynBenefits[i]?.title ?? b.title,
+    description: dynBenefits[i]?.description ?? b.description,
+  }));
+
+  const displaySteps = get<typeof steps>("steps", steps);
+  const displayDocuments = get<string[]>("documents", documents);
+
   return (
     <>
       {/* Hero Section */}
@@ -93,7 +106,7 @@ export default function TitreFoncierPage() {
               <span>/</span>
               <Link href="/services/titre-foncier" className="hover:text-white transition-colors">Services</Link>
               <span>/</span>
-              <span className="text-white">Création de Titre Foncier</span>
+              <span className="text-white">{get("breadcrumb", "Création de Titre Foncier")}</span>
             </div>
 
             <div className="flex items-center gap-4 mb-6">
@@ -101,14 +114,12 @@ export default function TitreFoncierPage() {
                 <FileText className="h-8 w-8 text-gray-900" />
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-white">
-                Création de Titre Foncier
+                {get("hero_title", "Création de Titre Foncier")}
               </h1>
             </div>
 
             <p className="text-xl text-green-100 leading-relaxed">
-              Le titre foncier est un acte administratif définitif, inattaquable et irrévocable 
-              attestant la propriété immobilière. Nous vous accompagnons dans toute la procédure 
-              d&apos;immatriculation foncière auprès du guichet unique foncier.
+              {get("hero_description", "Le titre foncier est un acte administratif définitif, inattaquable et irrévocable attestant la propriété immobilière. Nous vous accompagnons dans toute la procédure d'immatriculation foncière auprès du guichet unique foncier.")}
             </p>
           </motion.div>
         </div>
@@ -127,18 +138,13 @@ export default function TitreFoncierPage() {
                 Comprendre
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Qu&apos;est-ce qu&apos;un Titre Foncier ?
+                {get("what_title", "Qu'est-ce qu'un Titre Foncier ?")}
               </h2>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Le titre foncier (TF) est avant tout un acte administratif <strong>définitif, 
-                inattaquable et irrévocable</strong> attestant la propriété immobilière, 
-                inscrit dans les livres fonciers. Il constitue la <strong>preuve absolue</strong> du 
-                droit de propriété.
+                {get("what_text", "Le titre foncier (TF) est avant tout un acte administratif définitif, inattaquable et irrévocable attestant la propriété immobilière, inscrit dans les livres fonciers. Il constitue la preuve absolue du droit de propriété.")}
               </p>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                L&apos;obtention du titre foncier au Togo suit une procédure d&apos;immatriculation 
-                foncière auprès du guichet unique foncier. Cette procédure requiert une 
-                connaissance approfondie des exigences légales et administratives.
+                {get("what_text2", "L'obtention du titre foncier au Togo suit une procédure d'immatriculation foncière auprès du guichet unique foncier. Cette procédure requiert une connaissance approfondie des exigences légales et administratives.")}
               </p>
 
               <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
@@ -147,8 +153,7 @@ export default function TitreFoncierPage() {
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Important</h4>
                     <p className="text-gray-600 text-sm">
-                      Toute personne détentrice d&apos;un titre foncier transforme un droit 
-                      coutumier ou précaire en un droit de propriété formel et protégé par l&apos;État.
+                      {get("important_text", "Toute personne détentrice d'un titre foncier transforme un droit coutumier ou précaire en un droit de propriété formel et protégé par l'État.")}
                     </p>
                   </div>
                 </div>
@@ -161,7 +166,7 @@ export default function TitreFoncierPage() {
               viewport={{ once: true }}
               className="grid grid-cols-1 gap-6"
             >
-              {benefits.map((benefit, index) => (
+              {displayBenefits.map((benefit, index) => (
                 <Card key={benefit.title} hover={false} className="border-l-4 border-l-green-500">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
@@ -196,10 +201,10 @@ export default function TitreFoncierPage() {
               Notre Processus
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Les Étapes de la Création
+              {get("process_title", "Les Étapes de la Création")}
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Un accompagnement personnalisé à chaque étape de votre procédure d&apos;immatriculation.
+              {get("process_subtitle", "Un accompagnement personnalisé à chaque étape de votre procédure d'immatriculation.")}
             </p>
           </motion.div>
 
@@ -208,7 +213,7 @@ export default function TitreFoncierPage() {
             <div className="absolute top-8 left-1/2 -translate-x-1/2 w-full max-w-4xl h-0.5 bg-green-200 hidden lg:block" />
 
             <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-8">
-              {steps.map((step, index) => (
+              {displaySteps.map((step, index) => (
                 <motion.div
                   key={step.number}
                   initial={{ opacity: 0, y: 20 }}
@@ -244,16 +249,14 @@ export default function TitreFoncierPage() {
                 Documents Requis
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Pièces à Fournir
+                {get("docs_title", "Pièces à Fournir")}
               </h2>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                Pour constituer un dossier complet d&apos;immatriculation foncière, 
-                plusieurs documents sont généralement nécessaires. Notre équipe vous 
-                accompagne dans la collecte et la vérification de ces pièces.
+                {get("docs_text", "Pour constituer un dossier complet d'immatriculation foncière, plusieurs documents sont généralement nécessaires. Notre équipe vous accompagne dans la collecte et la vérification de ces pièces.")}
               </p>
 
               <div className="space-y-4">
-                {documents.map((doc, index) => (
+                {displayDocuments.map((doc, index) => (
                   <motion.div
                     key={doc}
                     initial={{ opacity: 0, x: -20 }}
@@ -283,16 +286,16 @@ export default function TitreFoncierPage() {
                       <Clock className="h-7 w-7" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold">Délais Moyens</h3>
-                      <p className="text-green-100">Variable selon les dossiers</p>
+                      <h3 className="text-xl font-semibold">{get("timeline_title", "Délais Moyens")}</h3>
+                      <p className="text-green-100">{get("timeline_subtitle", "Variable selon les dossiers")}</p>
                     </div>
                   </div>
 
                   <div className="space-y-4 mb-8">
                     <div className="bg-white/10 rounded-xl p-4">
                       <div className="flex justify-between items-center mb-2">
-                        <span>Constitution du dossier</span>
-                        <span className="font-semibold">1-2 semaines</span>
+                        <span>{get("timeline_1_label", "Constitution du dossier")}</span>
+                        <span className="font-semibold">{get("timeline_1_duration", "1-2 semaines")}</span>
                       </div>
                       <div className="h-2 bg-white/20 rounded-full overflow-hidden">
                         <div className="h-full bg-yellow-400 rounded-full" style={{ width: "20%" }} />
@@ -300,8 +303,8 @@ export default function TitreFoncierPage() {
                     </div>
                     <div className="bg-white/10 rounded-xl p-4">
                       <div className="flex justify-between items-center mb-2">
-                        <span>Procédure administrative</span>
-                        <span className="font-semibold">2-6 mois</span>
+                        <span>{get("timeline_2_label", "Procédure administrative")}</span>
+                        <span className="font-semibold">{get("timeline_2_duration", "2-6 mois")}</span>
                       </div>
                       <div className="h-2 bg-white/20 rounded-full overflow-hidden">
                         <div className="h-full bg-yellow-400 rounded-full" style={{ width: "60%" }} />
@@ -309,8 +312,8 @@ export default function TitreFoncierPage() {
                     </div>
                     <div className="bg-white/10 rounded-xl p-4">
                       <div className="flex justify-between items-center mb-2">
-                        <span>Délivrance du titre</span>
-                        <span className="font-semibold">1-2 semaines</span>
+                        <span>{get("timeline_3_label", "Délivrance du titre")}</span>
+                        <span className="font-semibold">{get("timeline_3_duration", "1-2 semaines")}</span>
                       </div>
                       <div className="h-2 bg-white/20 rounded-full overflow-hidden">
                         <div className="h-full bg-yellow-400 rounded-full" style={{ width: "20%" }} />
@@ -320,7 +323,7 @@ export default function TitreFoncierPage() {
 
                   <Link href="/contact">
                     <Button className="w-full bg-yellow-500 hover:bg-yellow-400 text-gray-900">
-                      Demander un Devis
+                      {get("timeline_cta", "Demander un Devis")}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
@@ -342,16 +345,15 @@ export default function TitreFoncierPage() {
           >
             <FileCheck className="h-16 w-16 mx-auto mb-6 text-yellow-400" />
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Prêt à Obtenir Votre Titre Foncier ?
+              {get("cta_title", "Prêt à Obtenir Votre Titre Foncier ?")}
             </h2>
             <p className="text-green-100 max-w-2xl mx-auto mb-8">
-              Contactez-nous pour une consultation gratuite et découvrez comment 
-              nous pouvons vous accompagner dans votre procédure d&apos;immatriculation.
+              {get("cta_text", "Contactez-nous pour une consultation gratuite et découvrez comment nous pouvons vous accompagner dans votre procédure d'immatriculation.")}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/contact">
                 <Button size="xl" className="bg-yellow-500 hover:bg-yellow-400 text-gray-900">
-                  Demander un Devis Gratuit
+                  {get("cta_button", "Demander un Devis Gratuit")}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>

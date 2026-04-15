@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { usePageContent } from "@/lib/supabase/content";
 
 const values = [
   {
@@ -42,7 +43,7 @@ const values = [
 const milestones = [
   {
     year: "2023",
-    title: "Création de DKA-Consulting",
+    title: "Création de DKA-Consulting SARL",
     description: "Fondation du cabinet par de jeunes diplômés en droit des affaires et géométrie-topographie.",
   },
   {
@@ -70,6 +71,28 @@ const legalInfo = [
 ];
 
 export default function AProposPage() {
+  const { get } = usePageContent("a-propos");
+
+  const dynamicValues = get<Array<{ title: string; description: string }>>("values", []);
+  const dynamicMilestones = get<Array<{ year: string; title: string; description: string }>>("milestones", []);
+  const dynamicLegalInfo = get<Array<{ label: string; value: string }>>("legal_info", []);
+  const dynamicGoals = get<string[]>("vision_goals", []);
+
+  const displayValues = values.map((v, i) => ({
+    ...v,
+    title: dynamicValues[i]?.title || v.title,
+    description: dynamicValues[i]?.description || v.description,
+  }));
+
+  const displayMilestones = dynamicMilestones.length > 0 ? dynamicMilestones : milestones;
+  const displayLegalInfo = dynamicLegalInfo.length > 0 ? dynamicLegalInfo : legalInfo;
+  const displayGoals = dynamicGoals.length > 0 ? dynamicGoals : [
+    "Devenir le cabinet de référence au Togo",
+    "Accompagner toujours plus de Togolais",
+    "Innover dans nos services",
+    "Former les nouvelles générations",
+  ];
+
   return (
     <>
       {/* Hero Section */}
@@ -90,12 +113,10 @@ export default function AProposPage() {
               À Propos de Nous
             </span>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              DKA-Consulting Sarl
+              {get("hero_title", "DKA-Consulting SARL")}
             </h1>
             <p className="text-xl text-green-100 leading-relaxed">
-              Un cabinet foncier et immobilier créé par de jeunes entrepreneurs 
-              togolais déterminés à accompagner leurs concitoyens dans la sécurisation 
-              de leur patrimoine.
+              {get("hero_subtitle", "Un cabinet foncier et immobilier créé par de jeunes entrepreneurs togolais déterminés à accompagner leurs concitoyens dans la sécurisation de leur patrimoine.")}
             </p>
           </motion.div>
         </div>
@@ -114,26 +135,17 @@ export default function AProposPage() {
                 Notre Histoire
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Née d&apos;une Vision Entrepreneuriale
+                {get("history_title", "Née d'une Vision Entrepreneuriale")}
               </h2>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Le foncier de nos jours est devenu un <strong>casse-tête pour la population</strong> en 
-                Afrique et particulièrement au Togo. Afin donc de permettre aux gens d&apos;être dans le 
-                bain pour ne pas être surpris désagréablement par les innovations et les exigences 
-                légales nouvelles en la matière, <strong>DKA-Consulting Sarl</strong> est créée pour 
-                leur jouer ce rôle et ceci de façon claire et transparente.
+                {get("history_text", "Le foncier de nos jours est devenu un casse-tête pour la population en Afrique et particulièrement au Togo. Afin donc de permettre aux gens d'être dans le bain pour ne pas être surpris désagréablement par les innovations et les exigences légales nouvelles en la matière, DKA-Consulting SARL est créée pour leur jouer ce rôle et ceci de façon claire et transparente.")}
               </p>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                Jeune entreprise, DKA-Consulting est créée en <strong>2023</strong> dans les conditions 
-                légales au Togo, et plus précisément à Lomé par de <strong>jeunes diplômés en droit des 
-                affaires et en géométrie-topographie</strong>. C&apos;est un cabinet qui évolue grâce à la 
-                volonté et à la détermination de ses fondateurs qui veulent prendre leur destin en main 
-                par l&apos;entreprenariat.
+                {get("history_text2", "Jeune entreprise, DKA-Consulting SARL est créée en 2023 dans les conditions légales au Togo, et plus précisément à Lomé par de jeunes diplômés en droit des affaires et en géométrie-topographie. C'est un cabinet qui évolue grâce à la volonté et à la détermination de ses fondateurs qui veulent prendre leur destin en main par l'entreprenariat.")}
               </p>
 
               <blockquote className="border-l-4 border-green-600 pl-6 py-2 italic text-gray-700">
-                &quot;Le travail bien fait est notre force car c&apos;est ce qui crée la confiance et une 
-                relation d&apos;affaire continue avec nos clients.&quot;
+                &quot;{get("quote", "Le travail bien fait est notre force car c'est ce qui crée la confiance et une relation d'affaire continue avec nos clients.")}&quot;
               </blockquote>
             </motion.div>
 
@@ -145,7 +157,7 @@ export default function AProposPage() {
               <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-3xl p-8 text-white">
                 <h3 className="text-2xl font-bold mb-6">Informations Légales</h3>
                 <div className="space-y-4">
-                  {legalInfo.map((info) => (
+                  {displayLegalInfo.map((info) => (
                     <div
                       key={info.label}
                       className="flex justify-between items-center p-4 bg-white/10 rounded-xl"
@@ -193,7 +205,7 @@ export default function AProposPage() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
+            {displayValues.map((value, index) => (
               <motion.div
                 key={value.title}
                 initial={{ opacity: 0, y: 20 }}
@@ -236,7 +248,7 @@ export default function AProposPage() {
           </motion.div>
 
           <div className="max-w-3xl mx-auto">
-            {milestones.map((milestone, index) => (
+            {displayMilestones.map((milestone, index) => (
               <motion.div
                 key={milestone.title}
                 initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
@@ -248,7 +260,7 @@ export default function AProposPage() {
                   <div className="w-16 h-16 bg-green-600 text-white rounded-2xl flex items-center justify-center font-bold shadow-lg">
                     {milestone.year}
                   </div>
-                  {index < milestones.length - 1 && (
+                  {index < displayMilestones.length - 1 && (
                     <div className="w-0.5 h-full bg-green-200 mt-4" />
                   )}
                 </div>
@@ -279,21 +291,14 @@ export default function AProposPage() {
                 Notre Vision
               </span>
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Se Démarquer par l&apos;Excellence
+                {get("vision_title", "Se Démarquer par l'Excellence")}
               </h2>
               <p className="text-green-100 mb-8 leading-relaxed">
-                La plus grande vision du cabinet c&apos;est de se faire remarquer et se 
-                démarquer parmi les entreprises qui interviennent dans le même domaine 
-                dans les prochaines années. Et on ne peut parvenir à cela que par du bon travail.
+                {get("vision_text", "La plus grande vision du cabinet c'est de se faire remarquer et se démarquer parmi les entreprises qui interviennent dans le même domaine dans les prochaines années. Et on ne peut parvenir à cela que par du bon travail.")}
               </p>
 
               <div className="space-y-4">
-                {[
-                  "Devenir le cabinet de référence au Togo",
-                  "Accompagner toujours plus de Togolais",
-                  "Innover dans nos services",
-                  "Former les nouvelles générations",
-                ].map((item) => (
+                {displayGoals.map((item) => (
                   <div key={item} className="flex items-center gap-3">
                     <CheckCircle className="h-5 w-5 text-yellow-400 flex-shrink-0" />
                     <span>{item}</span>
@@ -338,11 +343,10 @@ export default function AProposPage() {
             className="bg-white rounded-3xl p-12 text-center shadow-xl border border-gray-100"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Prêt à Travailler avec Nous ?
+              {get("cta_title", "Prêt à Travailler avec Nous ?")}
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-              Contactez-nous dès aujourd&apos;hui pour discuter de votre projet foncier 
-              et découvrir comment nous pouvons vous accompagner.
+              {get("cta_text", "Contactez-nous dès aujourd'hui pour discuter de votre projet foncier et découvrir comment nous pouvons vous accompagner.")}
             </p>
             <Link href="/contact">
               <Button size="xl">

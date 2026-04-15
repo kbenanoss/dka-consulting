@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { usePageContent } from "@/lib/supabase/content";
 
 const services = [
   {
@@ -58,6 +59,30 @@ const expertise = [
 ];
 
 export default function ConseilJuridiquePage() {
+  const { get } = usePageContent("service-conseil");
+
+  const dynServices = get<Array<{title: string; description: string}>>("services_list", []);
+  const displayServices = services.map((s, i) => ({
+    ...s,
+    title: dynServices[i]?.title ?? s.title,
+    description: dynServices[i]?.description ?? s.description,
+  }));
+
+  const displayExpertise = get<string[]>("expertise_list", expertise);
+  const displayWhyChoose = get<string[]>("why_choose_list", [
+    "Expertise reconnue en droit foncier togolais",
+    "Accompagnement personnalis\u00e9",
+    "Transparence dans nos d\u00e9marches",
+    "Tarifs comp\u00e9titifs",
+    "Suivi rigoureux de vos dossiers",
+    "Disponibilit\u00e9 et r\u00e9activit\u00e9",
+  ]);
+  const displayChantierItems = get<Array<{title: string; desc: string}>>("chantier_items", [
+    { title: "Supervision", desc: "Contr\u00f4le r\u00e9gulier de l'avancement des travaux" },
+    { title: "Coordination", desc: "Gestion des intervenants sur le chantier" },
+    { title: "Reporting", desc: "Rapports d\u00e9taill\u00e9s sur l'\u00e9tat du projet" },
+  ]);
+
   return (
     <>
       {/* Hero Section */}
@@ -79,7 +104,7 @@ export default function ConseilJuridiquePage() {
               <span>/</span>
               <span>Services</span>
               <span>/</span>
-              <span className="text-white">Conseil Juridique</span>
+              <span className="text-white">{get("breadcrumb", "Conseil Juridique")}</span>
             </div>
 
             <div className="flex items-center gap-4 mb-6">
@@ -87,14 +112,12 @@ export default function ConseilJuridiquePage() {
                 <Scale className="h-8 w-8 text-gray-900" />
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-white">
-                Conseil Juridique
+                {get("hero_title", "Conseil Juridique")}
               </h1>
             </div>
 
             <p className="text-xl text-green-100 leading-relaxed">
-              Outre les activités foncières et immobilières, DKA-Consulting traite 
-              d&apos;autres questions juridiques. Notre équipe de juristes vous accompagne 
-              dans tous vos besoins légaux liés au foncier.
+              {get("hero_description", "Outre les activités foncières et immobilières, DKA-Consulting SARL traite d'autres questions juridiques. Notre équipe de juristes vous accompagne dans tous vos besoins légaux liés au foncier.")}
             </p>
           </motion.div>
         </div>
@@ -113,16 +136,15 @@ export default function ConseilJuridiquePage() {
               Nos Services
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Un Accompagnement Juridique Complet
+              {get("services_title", "Un Accompagnement Juridique Complet")}
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Bénéficiez de l&apos;expertise de nos juristes spécialisés en droit foncier 
-              et immobilier pour tous vos projets.
+              {get("services_subtitle", "Bénéficiez de l'expertise de nos juristes spécialisés en droit foncier et immobilier pour tous vos projets.")}
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, index) => (
+            {displayServices.map((service, index) => (
               <motion.div
                 key={service.title}
                 initial={{ opacity: 0, y: 20 }}
@@ -160,16 +182,14 @@ export default function ConseilJuridiquePage() {
                 Notre Expertise
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Des Juristes Spécialisés à Votre Service
+                {get("expertise_title", "Des Juristes Spécialisés à Votre Service")}
               </h2>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                Notre équipe est composée de diplômés en <strong>droit des affaires</strong>, 
-                formés pour répondre à toutes vos questions juridiques liées au foncier et 
-                à l&apos;immobilier au Togo.
+                {get("expertise_text", "Notre équipe est composée de diplômés en droit des affaires, formés pour répondre à toutes vos questions juridiques liées au foncier et à l'immobilier au Togo.")}
               </p>
 
               <div className="grid grid-cols-2 gap-4">
-                {expertise.map((item, index) => (
+                {displayExpertise.map((item, index) => (
                   <motion.div
                     key={item}
                     initial={{ opacity: 0, x: -20 }}
@@ -193,17 +213,10 @@ export default function ConseilJuridiquePage() {
               <Card className="bg-gradient-to-br from-green-600 to-green-700 text-white border-0">
                 <CardContent className="p-8">
                   <h3 className="text-2xl font-bold mb-6">
-                    Pourquoi Nous Choisir ?
+                    {get("why_choose_title", "Pourquoi Nous Choisir ?")}
                   </h3>
                   <ul className="space-y-4">
-                    {[
-                      "Expertise reconnue en droit foncier togolais",
-                      "Accompagnement personnalisé",
-                      "Transparence dans nos démarches",
-                      "Tarifs compétitifs",
-                      "Suivi rigoureux de vos dossiers",
-                      "Disponibilité et réactivité",
-                    ].map((item) => (
+                    {displayWhyChoose.map((item) => (
                       <li key={item} className="flex items-center gap-3">
                         <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
                           <CheckCircle className="h-4 w-4 text-gray-900" />
@@ -232,20 +245,14 @@ export default function ConseilJuridiquePage() {
               <HardHat className="h-10 w-10 text-yellow-600" />
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Suivi de Chantiers
+              {get("chantier_title", "Suivi de Chantiers")}
             </h2>
             <p className="text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-              En plus de nos services juridiques, DKA-Consulting propose un service de 
-              <strong> suivi de chantiers</strong> pour ceux qui le sollicitent. Nos experts 
-              assurent la supervision et la gestion de vos projets de construction.
+              {get("chantier_text", "En plus de nos services juridiques, DKA-Consulting SARL propose un service de suivi de chantiers pour ceux qui le sollicitent. Nos experts assurent la supervision et la gestion de vos projets de construction.")}
             </p>
 
             <div className="grid md:grid-cols-3 gap-6 mt-12">
-              {[
-                { title: "Supervision", desc: "Contrôle régulier de l'avancement des travaux" },
-                { title: "Coordination", desc: "Gestion des intervenants sur le chantier" },
-                { title: "Reporting", desc: "Rapports détaillés sur l'état du projet" },
-              ].map((item) => (
+              {displayChantierItems.map((item) => (
                 <Card key={item.title} hover={false} className="border-t-4 border-t-yellow-500">
                   <CardContent className="p-6 text-center">
                     <h3 className="font-semibold text-gray-900 mb-2">{item.title}</h3>
@@ -269,15 +276,14 @@ export default function ConseilJuridiquePage() {
           >
             <Scale className="h-16 w-16 mx-auto mb-6 text-yellow-400" />
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Besoin d&apos;un Conseil Juridique ?
+              {get("cta_title", "Besoin d'un Conseil Juridique ?")}
             </h2>
             <p className="text-green-100 max-w-2xl mx-auto mb-8">
-              Notre équipe de juristes est à votre disposition pour répondre à toutes 
-              vos questions et vous accompagner dans vos démarches.
+              {get("cta_text", "Notre équipe de juristes est à votre disposition pour répondre à toutes vos questions et vous accompagner dans vos démarches.")}
             </p>
             <Link href="/contact">
               <Button size="xl" className="bg-yellow-500 hover:bg-yellow-400 text-gray-900">
-                Prendre Rendez-vous
+                {get("cta_button", "Prendre Rendez-vous")}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>

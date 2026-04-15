@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
@@ -15,10 +15,13 @@ import {
   X,
   ChevronDown,
   Search,
+  Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
 
 const sidebarItems = [
   {
@@ -37,6 +40,11 @@ const sidebarItems = [
     icon: FolderOpen,
   },
   {
+    label: "Contenu du Site",
+    href: "/admin/contenu",
+    icon: Globe,
+  },
+  {
     label: "Paramètres",
     href: "/admin/parametres",
     icon: Settings,
@@ -49,8 +57,34 @@ export default function AdminLayoutClient({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+  }, []);
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/admin/login");
+    router.refresh();
+  };
+
+  // Login page: render children only, no sidebar
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
+
+  const initials = user?.email
+    ? user.email.substring(0, 2).toUpperCase()
+    : "AD";
+  const displayName = user?.user_metadata?.full_name || user?.email || "Admin";
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -68,7 +102,7 @@ export default function AdminLayoutClient({
               <span className="text-white font-bold">DK</span>
             </div>
             <div>
-              <h1 className="font-bold text-lg">DKA-Consulting</h1>
+              <h1 className="font-bold text-lg">DKA-Consulting SARL</h1>
               <p className="text-xs text-gray-400">Administration</p>
             </div>
           </div>
@@ -100,22 +134,21 @@ export default function AdminLayoutClient({
           <div className="p-4 border-t border-gray-800">
             <div className="flex items-center gap-3 px-4 py-3">
               <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
-                <span className="font-bold text-sm">AD</span>
+                <span className="font-bold text-sm">{initials}</span>
               </div>
-              <div className="flex-1">
-                <p className="font-medium text-sm">Admin DKA</p>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm truncate">{displayName}</p>
                 <p className="text-xs text-gray-400">Administrateur</p>
               </div>
             </div>
-            <Link href="/">
-              <Button
-                variant="ghost"
-                className="w-full mt-2 text-gray-400 hover:text-white hover:bg-gray-800"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Retour au site
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              className="w-full mt-2 text-gray-400 hover:text-white hover:bg-gray-800"
+              onClick={handleSignOut}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Déconnexion
+            </Button>
           </div>
         </div>
       </aside>
@@ -176,10 +209,10 @@ export default function AdminLayoutClient({
                   className="flex items-center gap-2 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
                 >
                   <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                    AD
+                    {initials}
                   </div>
-                  <span className="hidden md:block font-medium text-sm">
-                    Admin DKA
+                  <span className="hidden md:block font-medium text-sm truncate max-w-[120px]">
+                    {displayName}
                   </span>
                   <ChevronDown className="h-4 w-4" />
                 </button>
@@ -200,13 +233,12 @@ export default function AdminLayoutClient({
                         Paramètres
                       </Link>
                       <hr className="my-2 border-gray-100" />
-                      <Link
-                        href="/"
-                        className="block px-4 py-2 text-red-600 hover:bg-red-50"
-                        onClick={() => setUserMenuOpen(false)}
+                      <button
+                        className="w-full text-left block px-4 py-2 text-red-600 hover:bg-red-50"
+                        onClick={() => { setUserMenuOpen(false); handleSignOut(); }}
                       >
                         Déconnexion
-                      </Link>
+                      </button>
                     </motion.div>
                   )}
                 </AnimatePresence>

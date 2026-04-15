@@ -42,7 +42,7 @@ export function Footer() {
                 <span className="text-white font-bold text-xl">DK</span>
               </div>
               <div>
-                <h3 className="font-bold text-xl text-white">DKA-Consulting</h3>
+                <h3 className="font-bold text-xl text-white">DKA-Consulting SARL</h3>
                 <p className="text-sm text-gray-400">Foncier & Immobilier</p>
               </div>
             </div>
@@ -157,7 +157,7 @@ export function Footer() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm text-center md:text-left">
-              © 2023-{new Date().getFullYear()} DKA-Consulting Sarl. Tous droits réservés.
+              © 2023-{new Date().getFullYear()} DKA-Consulting SARL. Tous droits réservés.
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-sm">
               {footerLinks.legal.map((link) => (

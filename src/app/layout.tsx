@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DKA-Consulting | Cabinet Foncier & Immobilier au Togo",
-  description: "DKA-Consulting Sarl - Votre partenaire de confiance pour la création, mutation et morcellement de titres fonciers au Togo. Conseil juridique et accompagnement immobilier à Lomé.",
-  keywords: "titre foncier, immobilier, Togo, Lomé, mutation, morcellement, conseil juridique, DKA-Consulting",
+  title: "DKA-Consulting SARL | Cabinet Foncier & Immobilier au Togo",
+  description: "DKA-Consulting SARL - Votre partenaire de confiance pour la création, mutation et morcellement de titres fonciers au Togo. Conseil juridique et accompagnement immobilier à Lomé.",
+  keywords: "titre foncier, immobilier, Togo, Lomé, mutation, morcellement, conseil juridique, DKA-Consulting SARL",
 };
 
 export default function RootLayout({

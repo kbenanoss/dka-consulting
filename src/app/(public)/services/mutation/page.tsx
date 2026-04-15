@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { usePageContent } from "@/lib/supabase/content";
 
 const steps = [
   {
@@ -67,6 +68,29 @@ const typesOfMutation = [
 ];
 
 export default function MutationPage() {
+  const { get } = usePageContent("service-mutation");
+
+  const dynTypes = get<Array<{title: string; description: string}>>("types", []);
+  const displayTypes = typesOfMutation.map((t, i) => ({
+    ...t,
+    title: dynTypes[i]?.title ?? t.title,
+    description: dynTypes[i]?.description ?? t.description,
+  }));
+
+  const displaySteps = get<typeof steps>("steps", steps);
+  const displaySellerDocs = get<string[]>("seller_docs", [
+    "Titre foncier original",
+    "Pièce d'identité valide",
+    "Certificat de situation juridique",
+    "Quitus fiscal",
+  ]);
+  const displayBuyerDocs = get<string[]>("buyer_docs", [
+    "Pièce d'identité valide",
+    "Justificatif de domicile",
+    "Attestation de paiement",
+    "Acte de vente notarié",
+  ]);
+
   return (
     <>
       {/* Hero Section */}
@@ -88,7 +112,7 @@ export default function MutationPage() {
               <span>/</span>
               <span>Services</span>
               <span>/</span>
-              <span className="text-white">Mutation de Titre Foncier</span>
+              <span className="text-white">{get("breadcrumb", "Mutation de Titre Foncier")}</span>
             </div>
 
             <div className="flex items-center gap-4 mb-6">
@@ -96,14 +120,12 @@ export default function MutationPage() {
                 <ArrowRightLeft className="h-8 w-8 text-gray-900" />
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-white">
-                Mutation de Titre Foncier
+                {get("hero_title", "Mutation de Titre Foncier")}
               </h1>
             </div>
 
             <p className="text-xl text-green-100 leading-relaxed">
-              La mutation du titre foncier est la procédure administrative et juridique 
-              permettant le transfert de propriété d&apos;un bien immobilier d&apos;une personne 
-              à une autre en mettant à jour le livre foncier.
+              {get("hero_description", "La mutation du titre foncier est la procédure administrative et juridique permettant le transfert de propriété d'un bien immobilier d'une personne à une autre en mettant à jour le livre foncier.")}
             </p>
           </motion.div>
         </div>
@@ -122,18 +144,13 @@ export default function MutationPage() {
                 Comprendre
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Qu&apos;est-ce que la Mutation ?
+                {get("what_title", "Qu'est-ce que la Mutation ?")}
               </h2>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Le titre foncier (TF) créé peut subir une <strong>mutation</strong> d&apos;une 
-                personne à une autre. La mutation du TF est donc la procédure administrative 
-                et juridique permettant le <strong>transfert de propriété</strong> d&apos;un bien 
-                immobilier (terrain ou bâtiment) d&apos;une personne à une autre.
+                {get("what_text", "Le titre foncier (TF) créé peut subir une mutation d'une personne à une autre. La mutation du TF est donc la procédure administrative et juridique permettant le transfert de propriété d'un bien immobilier (terrain ou bâtiment) d'une personne à une autre.")}
               </p>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                Cette procédure implique la <strong>mise à jour du livre foncier</strong> auprès 
-                de la conservation foncière pour que le nouveau propriétaire soit officiellement 
-                reconnu comme tel.
+                {get("what_text2", "Cette procédure implique la mise à jour du livre foncier auprès de la conservation foncière pour que le nouveau propriétaire soit officiellement reconnu comme tel.")}
               </p>
 
               <div className="flex items-center gap-4 p-6 bg-green-50 rounded-2xl">
@@ -141,9 +158,9 @@ export default function MutationPage() {
                   <ClipboardCheck className="h-7 w-7 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900">Notre Accompagnement</h4>
+                  <h4 className="font-semibold text-gray-900">{get("accompaniment_title", "Notre Accompagnement")}</h4>
                   <p className="text-gray-600">
-                    Nous gérons l&apos;intégralité de la procédure de mutation pour vous.
+                    {get("accompaniment_text", "Nous gérons l'intégralité de la procédure de mutation pour vous.")}
                   </p>
                 </div>
               </div>
@@ -155,7 +172,7 @@ export default function MutationPage() {
               viewport={{ once: true }}
               className="grid grid-cols-2 gap-4"
             >
-              {typesOfMutation.map((type) => (
+              {displayTypes.map((type) => (
                 <Card key={type.title} className="text-center">
                   <CardContent className="p-6">
                     <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -184,15 +201,15 @@ export default function MutationPage() {
               Processus
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Les Étapes de la Mutation
+              {get("process_title", "Les Étapes de la Mutation")}
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Une procédure rigoureuse pour garantir la validité du transfert de propriété.
+              {get("process_subtitle", "Une procédure rigoureuse pour garantir la validité du transfert de propriété.")}
             </p>
           </motion.div>
 
           <div className="max-w-4xl mx-auto">
-            {steps.map((step, index) => (
+            {displaySteps.map((step, index) => (
               <motion.div
                 key={step.number}
                 initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
@@ -231,7 +248,7 @@ export default function MutationPage() {
                 Documentation
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Documents Nécessaires
+                {get("docs_title", "Documents Nécessaires")}
               </h2>
             </div>
 
@@ -240,12 +257,7 @@ export default function MutationPage() {
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-gray-900 mb-4">Pour le Vendeur</h3>
                   <ul className="space-y-3">
-                    {[
-                      "Titre foncier original",
-                      "Pièce d'identité valide",
-                      "Certificat de situation juridique",
-                      "Quitus fiscal",
-                    ].map((item) => (
+                    {displaySellerDocs.map((item) => (
                       <li key={item} className="flex items-center gap-3">
                         <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
                         <span className="text-gray-600">{item}</span>
@@ -259,12 +271,7 @@ export default function MutationPage() {
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-gray-900 mb-4">Pour l&apos;Acquéreur</h3>
                   <ul className="space-y-3">
-                    {[
-                      "Pièce d'identité valide",
-                      "Justificatif de domicile",
-                      "Attestation de paiement",
-                      "Acte de vente notarié",
-                    ].map((item) => (
+                    {displayBuyerDocs.map((item) => (
                       <li key={item} className="flex items-center gap-3">
                         <CheckCircle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
                         <span className="text-gray-600">{item}</span>
@@ -289,15 +296,14 @@ export default function MutationPage() {
           >
             <ArrowRightLeft className="h-16 w-16 mx-auto mb-6 text-yellow-400" />
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Besoin d&apos;une Mutation de Titre ?
+              {get("cta_title", "Besoin d'une Mutation de Titre ?")}
             </h2>
             <p className="text-green-100 max-w-2xl mx-auto mb-8">
-              Que ce soit pour une vente, une donation ou une succession, nous vous 
-              accompagnons dans toutes les étapes de la mutation de votre titre foncier.
+              {get("cta_text", "Que ce soit pour une vente, une donation ou une succession, nous vous accompagnons dans toutes les étapes de la mutation de votre titre foncier.")}
             </p>
             <Link href="/contact">
               <Button size="xl" className="bg-yellow-500 hover:bg-yellow-400 text-gray-900">
-                Demander un Devis Gratuit
+                {get("cta_button", "Demander un Devis Gratuit")}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
