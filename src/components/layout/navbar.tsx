@@ -127,7 +127,7 @@ export function Navbar() {
             {/* CTA Button */}
             <div className="hidden lg:flex items-center gap-4">
               <Link href="/admin">
-                <Button variant="ghost" size="sm">
+                <Button variant="outline" size="sm">
                   Administration
                 </Button>
               </Link>

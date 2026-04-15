@@ -303,9 +303,18 @@ export default function UtilisateursPage() {
                       </span>
                     </td>
                     <td className="p-4">
-                      <Badge variant={statusConfig[user.status].variant}>
-                        {statusConfig[user.status].label}
-                      </Badge>
+                      <button
+                        onClick={() => toggleStatus(user.id)}
+                        className="flex items-center gap-2 group"
+                        title={user.status === "actif" ? "Désactiver" : "Activer"}
+                      >
+                        <div className={`relative w-10 h-5 rounded-full transition-colors ${user.status === "actif" ? "bg-green-500" : "bg-gray-300"}`}>
+                          <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${user.status === "actif" ? "translate-x-5" : "translate-x-0"}`} />
+                        </div>
+                        <span className={`text-xs font-medium ${user.status === "actif" ? "text-green-600" : "text-gray-500"}`}>
+                          {statusConfig[user.status].label}
+                        </span>
+                      </button>
                     </td>
                     <td className="p-4 text-gray-500 text-sm hidden lg:table-cell">
                       {formatDate(user.created_at)}
@@ -459,7 +468,7 @@ export default function UtilisateursPage() {
                     Rôle
                   </label>
                   <select
-                    className="flex h-11 w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm"
+                    className="flex h-11 w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900"
                     value={formData.role}
                     onChange={(e) =>
                       setFormData({
